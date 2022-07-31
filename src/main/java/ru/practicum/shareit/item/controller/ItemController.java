@@ -55,7 +55,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteUser(@PathVariable int itemId) {
+    public void deleteItem(@PathVariable int itemId) {
         itemStorage.deleteItem(itemId);
     }
 }

@@ -25,7 +25,7 @@ public class InMemoryItemStorage implements ItemStorage {
         if (itemList.containsKey(id)) {
             return itemList.get(id);
         }
-        log.warn("Запрос данных о несуществующем пользователе с id - {}", id);
+        log.warn("Запрос данных о несуществующей вещи с id - {}", id);
         throw new ResourceNotFoundException(getMessageForItemNotFoundException(id));
     }
 
