@@ -26,7 +26,7 @@ public class InMemoryItemStorage implements ItemStorage {
             return itemList.get(id);
         }
         log.warn("Запрос данных о несуществующей вещи с id - {}", id);
-        throw new ResourceNotFoundException(getMessageForItemNotFoundException(id));
+        throw new ResourceNotFoundException(String.format("Вещи с id = %s не существует", id));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class InMemoryItemStorage implements ItemStorage {
             log.info("Изменение информации о вещи с id {}", item.getId());
         } else {
             log.warn("Попытка обновления несуществующей вещи - {}", item);
-            throw new ResourceNotFoundException(getMessageForItemNotFoundException(itemId));
+            throw new ResourceNotFoundException(String.format("Вещи с id = %s не существует", itemId));
         }
         return item;
     }
@@ -80,7 +80,7 @@ public class InMemoryItemStorage implements ItemStorage {
             log.info("Удаление вещи с id {}", id);
         } else {
             log.warn("Попытка удаления несуществующей вещи с id - {}", id);
-            throw new ResourceNotFoundException(getMessageForItemNotFoundException(id));
+            throw new ResourceNotFoundException(String.format("Вещи с id = %s не существует", id));
         }
     }
 
@@ -88,9 +88,5 @@ public class InMemoryItemStorage implements ItemStorage {
     public void deleteItemList() {
         itemList.clear();
         log.info("Удаление списка вещей");
-    }
-
-    private String getMessageForItemNotFoundException(int itemId) {
-        return "Вещи с id = " + itemId + " не существует";
     }
 }
