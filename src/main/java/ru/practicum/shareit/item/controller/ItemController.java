@@ -3,13 +3,18 @@ package ru.practicum.shareit.item.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
+import ru.practicum.shareit.item.comment.dto.CommentMapper;
+import ru.practicum.shareit.item.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.validators.OnCreate;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemStorage itemStorage;
+
     private final ItemService itemService;
 
     @Autowired
@@ -26,14 +32,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable int itemId) {
-        return ItemMapper.toItemDto(itemStorage.getItem(itemId));
+    public ItemWithBookingDto getItem(@PathVariable int itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+        return itemService.getItemWithBooking(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getUserItemList(@RequestHeader(value = "X-Sharer-User-Id") int userId) {
-        return itemService.getUserItemList(userId)
-                .stream().map((ItemMapper::toItemDto)).collect(Collectors.toList());
+    public List<ItemWithBookingDto> getUserItemList(@RequestHeader(value = "X-Sharer-User-Id") int userId) {
+        return itemService.getUserItemList(userId);
     }
 
     @GetMapping("/search")
@@ -46,6 +51,13 @@ public class ItemController {
     public ItemDto createItem(@Validated(OnCreate.class) @RequestBody Item newItem,
                               @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return ItemMapper.toItemDto(itemService.addItem(newItem, userId));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createItem(@Valid @RequestBody CommentRequestDto newComment,
+                                 @PathVariable int itemId,
+                                 @RequestHeader(value = "X-Sharer-User-Id") int authorId) {
+        return CommentMapper.toCommentDto(itemService.addComment(newComment, itemId, authorId));
     }
 
     @PatchMapping("/{itemId}")

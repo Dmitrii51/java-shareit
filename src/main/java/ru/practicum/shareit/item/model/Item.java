@@ -5,13 +5,19 @@ import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validators.OnCreate;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Entity
+@Table(name = "items")
 public class Item {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @NotBlank(message = "Название вещи не может состоять только из пробелов", groups = OnCreate.class)
     @NotEmpty(message = "Название вещи не может быть пустым", groups = OnCreate.class)
@@ -21,10 +27,15 @@ public class Item {
     @NotEmpty(message = "Описание вещи не может быть пустым", groups = OnCreate.class)
     private String description;
 
+    @Column(name = "is_available")
     @NotNull(message = "Статус доступности обязателен для заполнения", groups = OnCreate.class)
     private Boolean available;
 
+    @OneToOne
+    @JoinColumn(name = "owner_id")
     private User owner;
 
+    @OneToOne
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 }
