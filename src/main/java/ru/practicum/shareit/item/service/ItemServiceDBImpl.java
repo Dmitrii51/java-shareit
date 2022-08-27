@@ -158,8 +158,10 @@ public class ItemServiceDBImpl implements ItemService {
         } else {
             nextBooking = BookingMapper.toBookingForItemDto(itemFutureBookingList.get(0));
         }
-        List<CommentDto> comments = commentRepository.findByItem(item).
-                stream().map((CommentMapper::toCommentDto)).collect(Collectors.toList());
+        List<CommentDto> comments = commentRepository.findByItem(item)
+                .stream()
+                .map((CommentMapper::toCommentDto))
+                .collect(Collectors.toList());
         return ItemMapper.toItemWithBookingDto(item, lastBooking, nextBooking, comments);
     }
 
