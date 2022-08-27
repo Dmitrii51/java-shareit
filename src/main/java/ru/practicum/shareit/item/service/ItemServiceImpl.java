@@ -1,8 +1,9 @@
-package ru.practicum.shareit.item.service;
+/*package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
+@Service
 public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
     private final ItemStorage itemStorage;
@@ -69,4 +70,4 @@ public class ItemServiceImpl implements ItemService {
         }
         return filteredBySearchParameterItemList;
     }
-}
+}*/
