@@ -11,7 +11,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.validators.OnCreate;
 
 import javax.validation.Valid;
@@ -21,13 +20,10 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemStorage itemStorage;
-
     private final ItemService itemService;
 
     @Autowired
-    public ItemController(ItemStorage itemStorage, ItemService itemService) {
-        this.itemStorage = itemStorage;
+    public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
 
@@ -68,6 +64,6 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public void deleteItem(@PathVariable int itemId) {
-        itemStorage.deleteItem(itemId);
+        itemService.deleteItem(itemId);
     }
 }
