@@ -29,7 +29,8 @@ public class BookingServiceDBImpl implements BookingService {
     private final ItemService itemService;
 
     @Autowired
-    public BookingServiceDBImpl(BookingRepository bookingRepository, UserService userService, ItemService itemService) {
+    public BookingServiceDBImpl(BookingRepository bookingRepository,
+                                UserService userService, ItemService itemService) {
         this.bookingRepository = bookingRepository;
         this.userService = userService;
         this.itemService = itemService;
@@ -104,21 +105,21 @@ public class BookingServiceDBImpl implements BookingService {
         User booker = userService.getUser(bookerId);
         switch (state) {
             case "ALL":
-                return bookingRepository.findByBookerOrderByStartDesc(booker);
+                return bookingRepository.getAllBookerBookings(booker);
             case "CURRENT":
-                return bookingRepository.findByBookerAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                return bookingRepository.getBookerCurrentBookings(
                         booker, LocalDateTime.now(), LocalDateTime.now());
             case "PAST":
-                return bookingRepository.findByBookerAndEndIsBeforeOrderByStartDesc(
+                return bookingRepository.getBookerPastBookings(
                         booker, LocalDateTime.now());
             case "FUTURE":
-                return bookingRepository.findByBookerAndStartIsAfterOrderByStartDesc(
+                return bookingRepository.getBookerFutureBookings(
                         booker, LocalDateTime.now());
             case "WAITING":
-                return bookingRepository.findByBookerAndStatusOrderByStartDesc(
+                return bookingRepository.getBookerBookingsWithCertainStatus(
                         booker, BookingStatus.WAITING);
             case "REJECTED":
-                return bookingRepository.findByBookerAndStatusOrderByStartDesc(
+                return bookingRepository.getBookerBookingsWithCertainStatus(
                         booker, BookingStatus.REJECTED);
         }
         throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
@@ -128,21 +129,21 @@ public class BookingServiceDBImpl implements BookingService {
         User owner = userService.getUser(ownerId);
         switch (state) {
             case "ALL":
-                return bookingRepository.findByOwnerOrderByStartDesc(owner.getId());
+                return bookingRepository.getAllOwnerBookings(owner.getId());
             case "CURRENT":
-                return bookingRepository.findByOwnerAndStartIsAfterAndEndIsBeforeOrderByStartDesc(
+                return bookingRepository.getOwnerCurrentBookings(
                         owner.getId(), LocalDateTime.now(), LocalDateTime.now());
             case "PAST":
-                return bookingRepository.findByOwnerAndEndIsBeforeOrderByStartDesc(
+                return bookingRepository.getOwnerPastBookingsExcludingCertainStatus(
                         owner.getId(), LocalDateTime.now(), BookingStatus.REJECTED);
             case "FUTURE":
-                return bookingRepository.findByOwnerAndStartIsAfterOrderByStartDesc(
+                return bookingRepository.getOwnerFutureBookingsExcludingCertainStatus(
                         owner.getId(), LocalDateTime.now(), BookingStatus.REJECTED);
             case "WAITING":
-                return bookingRepository.findByOwnerAndStatusLikeOrderByStartDesc(
+                return bookingRepository.getOwnerBookingsWithCertainStatus(
                         owner.getId(), BookingStatus.WAITING);
             case "REJECTED":
-                return bookingRepository.findByOwnerAndStatusLikeOrderByStartDesc(
+                return bookingRepository.getOwnerBookingsWithCertainStatus(
                         owner.getId(), BookingStatus.REJECTED);
         }
         throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");

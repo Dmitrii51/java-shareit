@@ -144,14 +144,14 @@ public class ItemServiceDBImpl implements ItemService {
     private ItemWithBookingDto getItemDtoWithBooking(Item item, int userId) {
         BookingForItemDto lastBooking;
         BookingForItemDto nextBooking;
-        List<Booking> itemPastBookingList = bookingRepository.findByItemAndStartIsBeforeAndStatusOrderByStartDesc(
+        List<Booking> itemPastBookingList = bookingRepository.getItemLastBookings(
                 PageRequest.of(0, 1), item, LocalDateTime.now(), BookingStatus.APPROVED);
         if (itemPastBookingList.isEmpty() || item.getOwner().getId() != userId) {
             lastBooking = null;
         } else {
             lastBooking = BookingMapper.toBookingForItemDto(itemPastBookingList.get(0));
         }
-        List<Booking> itemFutureBookingList = bookingRepository.findByItemAndStartIsAfterAndStatusOrderByStart(
+        List<Booking> itemFutureBookingList = bookingRepository.getItemNextBookings(
                 PageRequest.of(0, 1), item, LocalDateTime.now(), BookingStatus.APPROVED);
         if (itemFutureBookingList.isEmpty() || item.getOwner().getId() != userId) {
             nextBooking = null;
@@ -168,7 +168,7 @@ public class ItemServiceDBImpl implements ItemService {
     public Comment addComment(CommentRequestDto newComment, int itemId, int authorId) {
         User author = userService.getUser(authorId);
         Item commentedItem = getItem(itemId);
-        List<Booking> authorBooking = bookingRepository.findByItemAndBookerAndStatusAndEndIsBefore(
+        List<Booking> authorBooking = bookingRepository.getBookerPastBookingsOfCertainItem(
                 PageRequest.of(0, 1), commentedItem, author, BookingStatus.APPROVED, LocalDateTime.now());
         if (authorBooking.isEmpty()) {
             log.warn("Попытка оставить комментарий к вещи с id - {} пользователем с id - {}, " +
