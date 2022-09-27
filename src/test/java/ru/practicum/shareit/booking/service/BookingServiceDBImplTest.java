@@ -95,8 +95,8 @@ class BookingServiceDBImplTest {
     @Test
     void approveBookingTest() {
         when(bookingRepository.findById(any(Integer.class))).thenReturn(Optional.of(booking1));
-        when(bookingRepository.save(any(Booking.class))).
-                thenAnswer((approvedBooking) -> {
+        when(bookingRepository.save(any(Booking.class)))
+                .thenAnswer((approvedBooking) -> {
                     booking1.setStatus(BookingStatus.APPROVED);
                     return booking1;
                 });
@@ -107,8 +107,8 @@ class BookingServiceDBImplTest {
     @Test
     void rejectBookingTest() {
         when(bookingRepository.findById(any(Integer.class))).thenReturn(Optional.of(booking1));
-        when(bookingRepository.save(any(Booking.class))).
-                thenAnswer((approvedBooking) -> {
+        when(bookingRepository.save(any(Booking.class)))
+                .thenAnswer((approvedBooking) -> {
                     booking1.setStatus(BookingStatus.REJECTED);
                     return booking1;
                 });

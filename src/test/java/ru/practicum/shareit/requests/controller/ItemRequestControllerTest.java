@@ -105,8 +105,8 @@ class ItemRequestControllerTest {
     @Test
     void createItemRequestEndpointTest() throws Exception {
         ItemRequestDtoForRequest newItemRequest = ItemRequestMapper.toItemRequestDtoForRequest(itemRequest1);
-        when(itemRequestService.addItemRequest(newItemRequest, user1.getId())).
-                thenReturn(itemRequest1);
+        when(itemRequestService.addItemRequest(newItemRequest, user1.getId()))
+                .thenReturn(itemRequest1);
         mockMvc.perform(post("/requests").contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", user1.getId())
                         .content(mapper.writeValueAsString(newItemRequest)))
