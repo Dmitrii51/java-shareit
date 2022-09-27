@@ -28,6 +28,14 @@ public class BookingMapper {
         );
     }
 
+    public static BookingRequestDto toBookingRequestDto(Booking booking) {
+        return new BookingRequestDto(
+                booking.getStart(),
+                booking.getEnd(),
+                booking.getItem().getId()
+        );
+    }
+
     public static Booking fromBookingRequestDto(BookingRequestDto bookingRequestDto,
                                                 User booker, Item bookingItem) {
         return new Booking(

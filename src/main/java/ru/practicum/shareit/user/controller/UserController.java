@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.service.UserServiceDBImpl;
 import ru.practicum.shareit.validators.OnCreate;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserServiceDBImpl userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

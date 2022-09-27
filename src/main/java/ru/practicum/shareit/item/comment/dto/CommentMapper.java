@@ -26,4 +26,10 @@ public class CommentMapper {
                 comment.getCreated()
         );
     }
+
+    public static CommentRequestDto toCommentRequestDto(Comment comment) {
+        return new CommentRequestDto(
+                comment.getText()
+        );
+    }
 }

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ResourceNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -38,7 +37,7 @@ public class UserServiceDBImpl implements UserService {
 
     @Override
     public User addUser(User newUser) {
-        validateNewUser(newUser);
+        newUser.setId(null);
         User savedUser = userRepository.save(newUser);
         log.info("Добавление нового пользователя c id {}", newUser.getId());
         return savedUser;
@@ -69,14 +68,6 @@ public class UserServiceDBImpl implements UserService {
         }
         userRepository.deleteById(id);
         log.info("Удаление пользователя с id {}", id);
-    }
-
-    private void validateNewUser(User newUser) {
-        if (newUser.getId() != null) {
-            log.warn("Добавление пользователя с некорректным id - {}", newUser);
-            throw new ValidationException("Ошибка добавления пользователя. " +
-                    "Id пользователя должен быть null");
-        }
     }
 
     private void validateUpdatedUser(User user, int userId) {

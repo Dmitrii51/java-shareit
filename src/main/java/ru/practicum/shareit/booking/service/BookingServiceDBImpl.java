@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
@@ -98,55 +99,60 @@ public class BookingServiceDBImpl implements BookingService {
         }
         log.warn("Попытка запроса информации о бронировании -  {} пользователем c id - {}, " +
                 "не являющимся владельцем вещи или запросившим бронирование", requestBooking, userId);
-        throw new ResourceNotFoundException("Отсуствуют права для изменения статуса бронирования");
+        throw new ResourceNotFoundException("Отсуствуют права для просмотра информации о бронировании");
     }
 
-    public List<Booking> getUserBookingList(String state, int bookerId) {
+    public List<Booking> getUserBookingList(String state, int bookerId, int from, int size) {
         User booker = userService.getUser(bookerId);
         switch (state) {
             case "ALL":
-                return bookingRepository.getAllBookerBookings(booker);
+                return bookingRepository.getAllBookerBookings(
+                        PageRequest.of(from / size, size), booker);
             case "CURRENT":
                 return bookingRepository.getBookerCurrentBookings(
-                        booker, LocalDateTime.now(), LocalDateTime.now());
+                        PageRequest.of(from / size, size), booker, LocalDateTime.now(), LocalDateTime.now());
             case "PAST":
                 return bookingRepository.getBookerPastBookings(
-                        booker, LocalDateTime.now());
+                        PageRequest.of(from / size, size), booker, LocalDateTime.now());
             case "FUTURE":
                 return bookingRepository.getBookerFutureBookings(
-                        booker, LocalDateTime.now());
+                        PageRequest.of(from / size, size), booker, LocalDateTime.now());
             case "WAITING":
                 return bookingRepository.getBookerBookingsWithCertainStatus(
-                        booker, BookingStatus.WAITING);
+                        PageRequest.of(from / size, size), booker, BookingStatus.WAITING);
             case "REJECTED":
                 return bookingRepository.getBookerBookingsWithCertainStatus(
-                        booker, BookingStatus.REJECTED);
+                        PageRequest.of(from / size, size), booker, BookingStatus.REJECTED);
         }
         throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
     }
 
-    public List<Booking> getOwnerBookingList(String state, int ownerId) {
+    public List<Booking> getOwnerBookingList(String state, int ownerId, int from, int size) {
         User owner = userService.getUser(ownerId);
         switch (state) {
             case "ALL":
-                return bookingRepository.getAllOwnerBookings(owner.getId());
+                return bookingRepository.getAllOwnerBookings(
+                        PageRequest.of(from / size, size), owner.getId());
             case "CURRENT":
                 return bookingRepository.getOwnerCurrentBookings(
+                        PageRequest.of(from / size, size),
                         owner.getId(), LocalDateTime.now(), LocalDateTime.now());
             case "PAST":
                 return bookingRepository.getOwnerPastBookingsExcludingCertainStatus(
+                        PageRequest.of(from / size, size),
                         owner.getId(), LocalDateTime.now(), BookingStatus.REJECTED);
             case "FUTURE":
                 return bookingRepository.getOwnerFutureBookingsExcludingCertainStatus(
+                        PageRequest.of(from / size, size),
                         owner.getId(), LocalDateTime.now(), BookingStatus.REJECTED);
             case "WAITING":
                 return bookingRepository.getOwnerBookingsWithCertainStatus(
+                        PageRequest.of(from / size, size),
                         owner.getId(), BookingStatus.WAITING);
             case "REJECTED":
                 return bookingRepository.getOwnerBookingsWithCertainStatus(
-                        owner.getId(), BookingStatus.REJECTED);
+                        PageRequest.of(from / size, size), owner.getId(), BookingStatus.REJECTED);
         }
         throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
     }
 }
-

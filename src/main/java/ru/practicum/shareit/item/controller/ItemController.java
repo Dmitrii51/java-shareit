@@ -8,12 +8,15 @@ import ru.practicum.shareit.item.comment.dto.CommentMapper;
 import ru.practicum.shareit.item.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemPostRequestDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validators.OnCreate;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,38 +31,48 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemWithBookingDto getItem(@PathVariable int itemId,
-                                      @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public ItemWithBookingDto getItem(
+            @PathVariable int itemId,
+            @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.getItemWithBooking(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemWithBookingDto> getUserItemList(@RequestHeader(value = "X-Sharer-User-Id") int userId) {
-        return itemService.getUserItemList(userId);
+    public List<ItemWithBookingDto> getUserItemList(
+            @RequestHeader(value = "X-Sharer-User-Id") int userId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "5") @Min(1) int size) {
+        return itemService.getUserItemList(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItemListWithRequestedSearchParameters(@RequestParam String text) {
-        return itemService.getItemListWithRequestedSearchParameters(text)
+    public List<ItemDto> getItemListWithRequestedSearchParameters(
+            @RequestParam String text,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "5") @Min(1) int size) {
+        return itemService.getItemListWithRequestedSearchParameters(text, from, size)
                 .stream().map((ItemMapper::toItemDto)).collect(Collectors.toList());
     }
 
     @PostMapping
-    public ItemDto createItem(@Validated(OnCreate.class) @RequestBody Item newItem,
-                              @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public ItemDto createItem(
+            @Validated(OnCreate.class) @RequestBody ItemPostRequestDto newItem,
+            @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return ItemMapper.toItemDto(itemService.addItem(newItem, userId));
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createItem(@Valid @RequestBody CommentRequestDto newComment,
-                                 @PathVariable int itemId,
-                                 @RequestHeader(value = "X-Sharer-User-Id") int authorId) {
+    public CommentDto createComment(
+            @Valid @RequestBody CommentRequestDto newComment,
+            @PathVariable int itemId,
+            @RequestHeader(value = "X-Sharer-User-Id") int authorId) {
         return CommentMapper.toCommentDto(itemService.addComment(newComment, itemId, authorId));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable int itemId, @RequestBody Item item,
-                              @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public ItemDto updateItem(
+            @PathVariable int itemId, @RequestBody Item item,
+            @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return ItemMapper.toItemDto(itemService.updateItem(item, itemId, userId));
     }
 

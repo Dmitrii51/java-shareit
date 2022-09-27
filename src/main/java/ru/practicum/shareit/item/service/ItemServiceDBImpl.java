@@ -18,9 +18,12 @@ import ru.practicum.shareit.item.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.item.comment.repositoriy.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemPostRequestDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositoriy.ItemRepository;
+import ru.practicum.shareit.requests.model.ItemRequest;
+import ru.practicum.shareit.requests.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -37,17 +40,20 @@ public class ItemServiceDBImpl implements ItemService {
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestService itemRequestService;
 
     @Autowired
     public ItemServiceDBImpl(UserService userService,
                              ItemRepository itemRepository,
                              BookingRepository bookingRepository,
-                             CommentRepository commentRepository
+                             CommentRepository commentRepository,
+                             ItemRequestService itemRequestService
     ) {
         this.userService = userService;
         this.itemRepository = itemRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestService = itemRequestService;
     }
 
     @Override
@@ -66,18 +72,18 @@ public class ItemServiceDBImpl implements ItemService {
     }
 
     @Override
-    public Item addItem(Item newItem, int userId) {
+    public Item addItem(ItemPostRequestDto newItem, int userId) {
         User owner = userService.getUser(userId);
-        newItem.setOwner(owner);
-        if (newItem.getId() == null) {
-            Item savedItem = itemRepository.save(newItem);
-            log.info("Добавление новой вещи c id {}", savedItem.getId());
-            return savedItem;
+        Integer requestId = newItem.getRequestId();
+        ItemRequest itemRequest;
+        if (requestId == null) {
+            itemRequest = null;
         } else {
-            log.warn("Добавление вещи с некорректным id - {}", newItem);
-            throw new ValidationException("Ошибка добавления вещи. " +
-                    "Id вещи должен быть равен null");
+            itemRequest = itemRequestService.getItemRequest(requestId);
         }
+        Item savedItem = itemRepository.save(ItemMapper.fromItemPostRequestDto(newItem, owner, itemRequest));
+        log.info("Добавление новой вещи c id {}", savedItem.getId());
+        return savedItem;
     }
 
     @Override
@@ -100,6 +106,9 @@ public class ItemServiceDBImpl implements ItemService {
             if (item.getAvailable() == null) {
                 item.setAvailable(savedItem.getAvailable());
             }
+            if (item.getRequest() == null) {
+                item.setRequest(savedItem.getRequest());
+            }
             itemRepository.save(item);
             log.info("Изменение информации о вещи с id {}", item.getId());
             return item;
@@ -110,9 +119,9 @@ public class ItemServiceDBImpl implements ItemService {
     }
 
     @Override
-    public List<ItemWithBookingDto> getUserItemList(int userId) {
+    public List<ItemWithBookingDto> getUserItemList(int userId, int from, int size) {
         User user = userService.getUser(userId);
-        List<Item> userItemList = itemRepository.findByOwner(user);
+        List<Item> userItemList = itemRepository.findByOwner(PageRequest.of(from / size, size), user);
         if (!userItemList.isEmpty()) {
             return userItemList.stream()
                     .map(item -> getItemDtoWithBooking(item, userId))
@@ -122,10 +131,11 @@ public class ItemServiceDBImpl implements ItemService {
         return null;
     }
 
-    public List<Item> getItemListWithRequestedSearchParameters(String text) {
+    @Override
+    public List<Item> getItemListWithRequestedSearchParameters(String text, int from, int size) {
         List<Item> filteredBySearchParameterItemList = new ArrayList<>();
         if (!text.isBlank() && !text.isEmpty()) {
-            filteredBySearchParameterItemList = itemRepository.search(text);
+            filteredBySearchParameterItemList = itemRepository.search(PageRequest.of(from / size, size), text);
         }
         return filteredBySearchParameterItemList;
     }
@@ -165,6 +175,7 @@ public class ItemServiceDBImpl implements ItemService {
         return ItemMapper.toItemWithBookingDto(item, lastBooking, nextBooking, comments);
     }
 
+    @Override
     public Comment addComment(CommentRequestDto newComment, int itemId, int authorId) {
         User author = userService.getUser(authorId);
         Item commentedItem = getItem(itemId);

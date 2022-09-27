@@ -16,20 +16,20 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker = ?1 " +
             "ORDER BY b.start DESC")
-    List<Booking> getAllBookerBookings(User booker);
+    List<Booking> getAllBookerBookings(PageRequest limit, User booker);
 
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker = ?1 " +
             "AND b.start > ?2 " +
             "ORDER BY b.start DESC")
-    List<Booking> getBookerFutureBookings(User booker, LocalDateTime now);
+    List<Booking> getBookerFutureBookings(PageRequest limit, User booker, LocalDateTime now);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker = ?1 " +
             "AND b.end < ?2 " +
             "ORDER BY b.start DESC")
-    List<Booking> getBookerPastBookings(User booker, LocalDateTime now);
+    List<Booking> getBookerPastBookings(PageRequest limit, User booker, LocalDateTime now);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker = ?1 " +
@@ -37,7 +37,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "AND b.end > ?3 " +
             "ORDER BY b.start DESC")
     List<Booking> getBookerCurrentBookings(
-            User booker, LocalDateTime start, LocalDateTime end
+            PageRequest limit, User booker, LocalDateTime start, LocalDateTime end
     );
 
     @Query("SELECT b FROM Booking b " +
@@ -45,28 +45,28 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "AND b.status = ?2 " +
             "ORDER BY b.start DESC")
     List<Booking> getBookerBookingsWithCertainStatus(
-            User booker, BookingStatus status);
+            PageRequest limit, User booker, BookingStatus status);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 " +
             "ORDER BY b.start DESC")
-    List<Booking> getAllOwnerBookings(int ownerId);
+    List<Booking> getAllOwnerBookings(PageRequest limit, int ownerId);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 " +
             "AND b.start > ?2 " +
             "AND b.status != ?3 " +
             "ORDER BY b.start DESC")
-    List<Booking> getOwnerFutureBookingsExcludingCertainStatus(int ownerId,
-                                                               LocalDateTime now, BookingStatus status);
+    List<Booking> getOwnerFutureBookingsExcludingCertainStatus(
+            PageRequest limit, int ownerId, LocalDateTime now, BookingStatus status);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 " +
             "AND b.status != ?3 " +
             "AND b.end < ?2 " +
             "ORDER BY b.start DESC")
-    List<Booking> getOwnerPastBookingsExcludingCertainStatus(int ownerId,
-                                                             LocalDateTime now, BookingStatus status);
+    List<Booking> getOwnerPastBookingsExcludingCertainStatus(
+            PageRequest limit, int ownerId, LocalDateTime now, BookingStatus status);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 " +
@@ -74,14 +74,14 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "AND b.end > ?3 " +
             "ORDER BY b.start DESC")
     List<Booking> getOwnerCurrentBookings(
-            int ownerId, LocalDateTime start, LocalDateTime end);
+            PageRequest limit, int ownerId, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item.owner.id = ?1 " +
             "AND b.status = ?2 " +
             "ORDER BY b.start DESC")
     List<Booking> getOwnerBookingsWithCertainStatus(
-            int ownerId, BookingStatus status);
+            PageRequest limit, int ownerId, BookingStatus status);
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item = ?1 " +
