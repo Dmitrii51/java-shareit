@@ -32,11 +32,11 @@ import static org.mockito.Mockito.when;
 class ItemRequestServiceDBImplTest {
 
     @Mock
-    ItemRequestRepository itemRequestRepository;
+    private ItemRequestRepository itemRequestRepository;
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    UserService userService;
+    private UserService userService;
     @InjectMocks
     private ItemRequestServiceDBImpl itemRequestServiceDB;
     private ItemRequest request1;

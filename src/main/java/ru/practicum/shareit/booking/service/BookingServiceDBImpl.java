@@ -38,68 +38,79 @@ public class BookingServiceDBImpl implements BookingService {
     }
 
     public Booking addBooking(BookingRequestDto newBooking, int bookerId) {
-        if (newBooking.getEnd().isAfter(newBooking.getStart())) {
-            Item bookingItem = itemService.getItem(newBooking.getItemId());
-            if (bookerId == bookingItem.getOwner().getId()) {
-                log.warn("Запрос пользователем c id - {} своей вещи - {}", bookerId, bookingItem);
-                throw new ResourceNotFoundException("Вещь не может быть забронирована своим хозяином");
-            }
-            User booker = userService.getUser(bookerId);
-            if (!bookingItem.getAvailable()) {
-                log.warn("Запрос недоступной для бронирования вещи - {}", newBooking);
-                throw new ValidationException("Ошибка добавления бронирования. " +
-                        "Вещь недоступна для бронирования");
-            }
-            Booking savedBooking = bookingRepository.save(
-                    BookingMapper.fromBookingRequestDto(newBooking, booker, bookingItem));
-            log.info("Добавление нового бронирования c id {}", savedBooking.getId());
-            return savedBooking;
-        } else {
+        Item bookingItem = itemService.getItem(newBooking.getItemId());
+        validateBookingForAdding(newBooking, bookerId, bookingItem);
+        User booker = userService.getUser(bookerId);
+        Booking savedBooking = bookingRepository.save(
+                BookingMapper.fromBookingRequestDto(newBooking, booker, bookingItem));
+        log.info("Добавление нового бронирования c id {}", savedBooking.getId());
+        return savedBooking;
+    }
+
+    private void validateBookingForAdding(BookingRequestDto newBooking, int bookerId, Item bookingItem) {
+        if (!newBooking.getEnd().isAfter(newBooking.getStart())) {
             log.warn("Добавление бронирования с некорректными датами начала и окончания - {}", newBooking);
             throw new ValidationException("Ошибка добавления бронирования. " +
                     "Дата начала бронирования не может быть позже даты окончания");
+        }
+        if (bookerId == bookingItem.getOwner().getId()) {
+            log.warn("Запрос пользователем c id - {} своей вещи - {}", bookerId, bookingItem);
+            throw new ResourceNotFoundException("Вещь не может быть забронирована своим хозяином");
+        }
+        if (!bookingItem.getAvailable()) {
+            log.warn("Запрос недоступной для бронирования вещи - {}", newBooking);
+            throw new ValidationException("Ошибка добавления бронирования. " +
+                    "Вещь недоступна для бронирования");
         }
     }
 
     public Booking approveBooking(int bookingId, Boolean approved, int ownerId) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if (booking.isEmpty()) {
-            log.warn("Запрос данных о несуществующем бронировании с id - {}", bookingId);
-            throw new ResourceNotFoundException(String.format("Бронирования с id = %s не существует", bookingId));
-        }
+        validateBookingExistence(booking, bookingId);
         Booking requestBooking = booking.get();
-        if (requestBooking.getItem().getOwner().getId() == ownerId &&
-                requestBooking.getStatus().equals(BookingStatus.WAITING)) {
-            if (approved) {
-                requestBooking.setStatus(BookingStatus.APPROVED);
+        validateBookingForApprove(requestBooking, ownerId);
+        if (approved) {
+            requestBooking.setStatus(BookingStatus.APPROVED);
+        } else {
+            requestBooking.setStatus(BookingStatus.REJECTED);
+        }
+        return bookingRepository.save(requestBooking);
+    }
 
-            } else {
-                requestBooking.setStatus(BookingStatus.REJECTED);
-            }
-            return bookingRepository.save(requestBooking);
-        } else if (requestBooking.getItem().getOwner().getId() != ownerId) {
+    private void validateBookingForApprove(Booking requestBooking, int ownerId) {
+        if (!requestBooking.getStatus().equals(BookingStatus.WAITING)) {
+            log.warn("Попытка повторного изменеия статуса бронирования {} пользователем c id - {}",
+                    requestBooking, ownerId);
+            throw new ValidationException("Статус вещи уже был изменен");
+        }
+        if (requestBooking.getItem().getOwner().getId() != ownerId) {
             log.warn("Попытка изменеия статуса бронирования -  {} пользователем c id - {}, " +
                     "не являющимся владельцем вещи", requestBooking, ownerId);
             throw new ResourceNotFoundException("Отсуствуют права для изменения статуса бронирования");
         }
-        log.warn("Попытка повторного изменеия статуса бронирования {} пользователем c id - {}",
-                requestBooking, ownerId);
-        throw new ValidationException("Статус вещи уже был изменен");
     }
 
     public Booking getBooking(int bookingId, int userId) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
+        validateBookingExistence(booking, bookingId);
+        Booking requestBooking = booking.get();
+        validateRequestBooking(requestBooking, userId);
+        return booking.get();
+    }
+
+    private void validateRequestBooking(Booking requestBooking, int userId) {
+        if (requestBooking.getItem().getOwner().getId() != userId && requestBooking.getBooker().getId() != userId) {
+            log.warn("Попытка запроса информации о бронировании -  {} пользователем c id - {}, " +
+                    "не являющимся владельцем вещи или запросившим бронирование", requestBooking, userId);
+            throw new ResourceNotFoundException("Отсуствуют права для просмотра информации о бронировании");
+        }
+    }
+
+    private void validateBookingExistence(Optional<Booking> booking, int bookingId) {
         if (booking.isEmpty()) {
             log.warn("Запрос данных о несуществующем бронировании с id - {}", bookingId);
             throw new ResourceNotFoundException(String.format("Бронирования с id = %s не существует", bookingId));
         }
-        Booking requestBooking = booking.get();
-        if (requestBooking.getItem().getOwner().getId() == userId || requestBooking.getBooker().getId() == userId) {
-            return requestBooking;
-        }
-        log.warn("Попытка запроса информации о бронировании -  {} пользователем c id - {}, " +
-                "не являющимся владельцем вещи или запросившим бронирование", requestBooking, userId);
-        throw new ResourceNotFoundException("Отсуствуют права для просмотра информации о бронировании");
     }
 
     public List<Booking> getUserBookingList(String state, int bookerId, int from, int size) {

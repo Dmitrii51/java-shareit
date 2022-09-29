@@ -111,8 +111,6 @@ public class IntegrationItemServiceTest {
                 .setParameter(1, item1)
                 .setParameter(2, LocalDateTime.now()).getSingleResult();
 
-        System.out.println(booking1);
-
         booking2 = entityManager.createQuery(
                         "SELECT b FROM Booking b " +
                                 "WHERE b.item = ?1 " +

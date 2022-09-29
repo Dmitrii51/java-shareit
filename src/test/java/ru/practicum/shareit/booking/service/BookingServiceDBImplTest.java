@@ -32,9 +32,9 @@ import static org.mockito.Mockito.when;
 class BookingServiceDBImplTest {
 
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
     @InjectMocks
     private BookingServiceDBImpl bookingService;
     @Mock
@@ -77,7 +77,6 @@ class BookingServiceDBImplTest {
     void addBookingNotAvailableItemTest() {
         item1.setAvailable(false);
         when(itemService.getItem(any(Integer.class))).thenReturn(item1);
-        when(userService.getUser(user3.getId())).thenReturn(user3);
         assertThatThrownBy(() -> bookingService.addBooking(
                 BookingMapper.toBookingRequestDto(booking1), user3.getId()))
                 .isInstanceOf(ValidationException.class);

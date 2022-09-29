@@ -45,15 +45,15 @@ import static org.mockito.Mockito.when;
 class ItemServiceDBImplTest {
 
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Mock
-    ItemRequestService itemRequestService;
+    private ItemRequestService itemRequestService;
     @InjectMocks
     private ItemServiceDBImpl itemService;
     private Item item1;
