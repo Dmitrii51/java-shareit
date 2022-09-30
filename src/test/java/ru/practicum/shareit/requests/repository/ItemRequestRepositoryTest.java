@@ -70,7 +70,6 @@ class ItemRequestRepositoryTest {
     void getPageableItemRequestListTest() {
         List<ItemRequest> userPageableItemRequestList = requestRepository.getPageableItemRequestList(
                 PageRequest.of(0, 2), user3);
-        System.out.println(userPageableItemRequestList);
         Assertions.assertEquals(1, userPageableItemRequestList.size(),
                 "Несоответствие количества запросов пользователя");
         Assertions.assertEquals(request3, userPageableItemRequestList.get(0),

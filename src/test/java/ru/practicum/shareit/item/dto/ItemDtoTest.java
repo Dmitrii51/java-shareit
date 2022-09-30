@@ -111,7 +111,6 @@ class ItemDtoTest {
                 .isEqualTo(itemWithBookingDto.getDescription());
         assertThat(json).extractingJsonPathBooleanValue("$.available")
                 .isEqualTo(itemWithBookingDto.getAvailable());
-        System.out.println(itemWithBookingDto.getLastBooking());
         assertThat(json).extractingJsonPathNumberValue("$.lastBooking.id")
                 .isEqualTo(itemWithBookingDto.getLastBooking().getId());
         assertThat(json).extractingJsonPathStringValue("$.lastBooking.start")

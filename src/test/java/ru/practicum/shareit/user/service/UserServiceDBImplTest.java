@@ -75,6 +75,7 @@ class UserServiceDBImplTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
+
     @Test
     void deleteUserTest() {
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));

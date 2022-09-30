@@ -135,7 +135,6 @@ class ItemServiceDBImplTest {
     @Test
     void updateItemWithNullValuesTest() {
         Item itemWithNullValues = new Item();
-        System.out.println(itemWithNullValues);
         when(userService.getUser(user1.getId())).thenReturn(user1);
         when(itemRepository.findById(item1.getId())).thenReturn(Optional.ofNullable(item1));
         when(itemRepository.save(item1)).thenReturn(item1);
