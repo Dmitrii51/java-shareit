@@ -3,7 +3,7 @@ version: "3.8"
 services:
   db:
     container_name: shareit-db
-    image: postgres:11-alpine
+    image: postgres:13.7-alpine
     ports:
       - "6541:5432"
     volumes:
