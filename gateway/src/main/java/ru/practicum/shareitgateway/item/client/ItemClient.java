@@ -1,4 +1,4 @@
-package ru.practicum.gateway.item.client;
+package ru.practicum.shareitgateway.item.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareitserver.item.comment.dto.CommentRequestDto;

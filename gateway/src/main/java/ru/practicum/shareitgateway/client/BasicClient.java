@@ -1,4 +1,4 @@
-package ru.practicum.gateway.client;
+package ru.practicum.shareitgateway.client;
 
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;

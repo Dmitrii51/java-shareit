@@ -1,4 +1,4 @@
-package ru.practicum.gateway.request.client;
+package ru.practicum.shareitgateway.request.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareitserver.request.dto.ItemRequestDtoForRequest;

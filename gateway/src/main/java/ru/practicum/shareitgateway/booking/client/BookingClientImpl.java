@@ -1,4 +1,4 @@
-package ru.practicum.gateway.booking.client;
+package ru.practicum.shareitgateway.booking.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.gateway.client.BasicClient;
+import ru.practicum.shareitgateway.client.BasicClient;
 import ru.practicum.shareitserver.booking.dto.BookingRequestDto;
 
 import java.util.Map;

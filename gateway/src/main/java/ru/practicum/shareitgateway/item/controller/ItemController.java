@@ -1,11 +1,11 @@
-package ru.practicum.gateway.item.controller;
+package ru.practicum.shareitgateway.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.gateway.item.client.ItemClient;
+import ru.practicum.shareitgateway.item.client.ItemClient;
 import ru.practicum.shareitserver.item.comment.dto.CommentRequestDto;
 import ru.practicum.shareitserver.item.dto.ItemPostRequestDto;
 import ru.practicum.shareitserver.item.model.Item;

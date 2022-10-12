@@ -1,11 +1,11 @@
-package ru.practicum.gateway.user.controller;
+package ru.practicum.shareitgateway.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.gateway.user.client.UserClient;
+import ru.practicum.shareitgateway.user.client.UserClient;
 import ru.practicum.shareitserver.user.model.User;
 import ru.practicum.shareitserver.validators.OnCreate;
 

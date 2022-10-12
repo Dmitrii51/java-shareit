@@ -1,4 +1,4 @@
-package ru.practicum.gateway.request.controller;
+package ru.practicum.shareitgateway.request.controller;
 
 
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.gateway.request.client.ItemRequestClient;
+import ru.practicum.shareitgateway.request.client.ItemRequestClient;
 import ru.practicum.shareitserver.request.dto.ItemRequestDtoForRequest;
 
 import javax.validation.Valid;

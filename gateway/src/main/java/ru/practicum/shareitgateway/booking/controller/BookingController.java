@@ -1,11 +1,11 @@
-package ru.practicum.gateway.booking.controller;
+package ru.practicum.shareitgateway.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.gateway.booking.client.BookingClient;
+import ru.practicum.shareitgateway.booking.client.BookingClient;
 import ru.practicum.shareitserver.booking.dto.BookingRequestDto;
 
 import javax.validation.Valid;

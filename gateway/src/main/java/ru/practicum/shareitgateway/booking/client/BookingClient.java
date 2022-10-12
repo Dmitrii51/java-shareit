@@ -1,4 +1,4 @@
-package ru.practicum.gateway.booking.client;
+package ru.practicum.shareitgateway.booking.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareitserver.booking.dto.BookingRequestDto;

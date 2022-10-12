@@ -1,4 +1,4 @@
-package ru.practicum.gateway.user.client;
+package ru.practicum.shareitgateway.user.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareitserver.user.model.User;
