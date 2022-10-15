@@ -1,3 +1,3 @@
 FROM amazoncorretto:11
-COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY target/shareit-server-0.0.1-SNAPSHOT-exec.jar shareit-server.jar
+ENTRYPOINT ["java","-jar","/shareit-server.jar"]
