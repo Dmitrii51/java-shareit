@@ -15,10 +15,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.comment.dto.CommentMapper;
 import ru.practicum.shareit.item.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.item.comment.model.Comment;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemPostRequestDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -145,10 +142,11 @@ class ItemControllerTest {
 
     @Test
     void updateItemEndpointTest() throws Exception {
+        ItemPatchRequestDto itemPatchRequestDto = ItemMapper.itemPatchRequestDto(item1);
         when(itemService.updateItem(item1, item1.getId(), user1.getId())).thenReturn(item1);
         mockMvc.perform(patch("/items/{itemId}", item1.getId()).contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", user1.getId())
-                        .content(mapper.writeValueAsString(item1)))
+                        .content(mapper.writeValueAsString(itemPatchRequestDto)))
                 .andExpectAll(status().isOk(), content().json(mapper.writeValueAsString(
                         ItemMapper.toItemDto(item1))));
     }

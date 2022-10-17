@@ -55,6 +55,17 @@ public class ItemMapper {
         );
     }
 
+    public static ItemPatchRequestDto itemPatchRequestDto(Item item) {
+        return new ItemPatchRequestDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                item.getOwner(),
+                item.getRequest()
+        );
+    }
+
     public static Item fromItemPatchRequestDto(ItemPatchRequestDto item) {
         return new Item(
                 item.getId(),
