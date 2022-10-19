@@ -58,8 +58,8 @@ public class BasicClient {
         return makeRequest(userId, url, null, HttpMethod.DELETE, null);
     }
 
-    protected  <T> ResponseEntity<Object> makeRequest(Integer userId, String url, T body, HttpMethod method,
-                                                      Map<String, Object> params) {
+    protected <T> ResponseEntity<Object> makeRequest(Integer userId, String url, T body, HttpMethod method,
+                                                     Map<String, Object> params) {
         HttpEntity<Object> request = new HttpEntity<>(body, getDefaultHeaders(userId));
         ResponseEntity<Object> response;
 
