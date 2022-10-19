@@ -166,15 +166,4 @@ public class IntegrationItemServiceTest {
         assertThat(savedComment.getItem()).isEqualTo(comment1.getItem());
         assertThat(savedComment.getAuthor()).isEqualTo(comment1.getAuthor());
     }
-
-    @Test
-    @Transactional
-    void deleteItemTest() {
-        itemService.deleteItem(item1.getId());
-        TypedQuery<Item> query = entityManager.createQuery(
-                        "SELECT i FROM Item i " +
-                                "WHERE i.id = :id", Item.class)
-                .setParameter("id", item1.getId());
-        assertThat(query.getResultList().size()).isEqualTo(0);
-    }
 }

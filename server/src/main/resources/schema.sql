@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS items (
     name varchar NOT NULL,
     description varchar NOT NULL,
     is_available boolean NOT NULL,
-    owner_id bigint REFERENCES users (id),
-    request_id bigint REFERENCES requests (id),
+    owner_id bigint REFERENCES users (id) ON DELETE CASCADE,
+    request_id bigint REFERENCES requests (id) ON DELETE CASCADE,
     CONSTRAINT pk_items PRIMARY KEY (id)
 );
 

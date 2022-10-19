@@ -9,6 +9,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemPatchRequestDto;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -69,11 +73,12 @@ class UserControllerTest {
 
     @Test
     void updateUserEndpointTest() throws Exception {
+        UserDto user1Dto = UserMapper.toUserDto(user1);
         when(userService.updateUser(user1, user1.getId()))
                 .thenReturn(user1);
         mockMvc.perform(patch("/users/{userId}", user1.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(user1)))
+                        .content(mapper.writeValueAsString(user1Dto)))
                 .andExpectAll(status().isOk(), content().json(mapper.writeValueAsString(user1)));
     }
 
