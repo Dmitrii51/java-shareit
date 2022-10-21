@@ -71,7 +71,7 @@ class BookingRepositoryTest {
                 PageRequest.of(0, 5), user3);
         Assertions.assertEquals(3, bookerBookingList.size(),
                 "Несоответствие количества бронирований пользователя");
-        Assertions.assertEquals(bookerBookingList.get(0).getBooker(), user3,
+        Assertions.assertEquals(user3, bookerBookingList.get(0).getBooker(),
                 "Несоответствие пользователя, запросившего бронирование");
         List<Booking> user3BookingList = Arrays.asList(booking3, booking4, booking5);
         Assertions.assertEquals(user3BookingList, bookerBookingList,
@@ -124,7 +124,7 @@ class BookingRepositoryTest {
                 PageRequest.of(0, 5), user1.getId());
         Assertions.assertEquals(3, ownerBookingList.size(),
                 "Несоответствие количества бронирований владельца");
-        Assertions.assertEquals(ownerBookingList.get(0).getItem().getOwner(), user1,
+        Assertions.assertEquals(user1, ownerBookingList.get(0).getItem().getOwner(),
                 "Несоответствие владельца вешей");
         List<Booking> user3BookingList = Arrays.asList(booking3, booking2, booking5);
         Assertions.assertEquals(user3BookingList, ownerBookingList,

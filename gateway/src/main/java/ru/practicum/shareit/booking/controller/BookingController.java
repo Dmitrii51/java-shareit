@@ -1,18 +1,21 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.exceptions.ValidationException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 
 
+@Slf4j
 @Validated
 @RestController
 @RequestMapping(path = "/bookings")
@@ -24,7 +27,16 @@ public class BookingController {
     public ResponseEntity<Object> createBooking(
             @Valid @RequestBody BookingRequestDto newBooking,
             @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+        validateBookingForAdding(newBooking);
         return bookingClient.addBooking(newBooking, userId);
+    }
+
+    private void validateBookingForAdding(BookingRequestDto newBooking) {
+        if (!newBooking.getEnd().isAfter(newBooking.getStart())) {
+            log.warn("Добавление бронирования с некорректными датами начала и окончания - {}", newBooking);
+            throw new ValidationException("Ошибка добавления бронирования. " +
+                    "Дата начала бронирования не может быть позже даты окончания");
+        }
     }
 
     @PatchMapping("/{bookingId}")

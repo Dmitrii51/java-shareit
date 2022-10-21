@@ -48,11 +48,6 @@ public class BookingServiceDBImpl implements BookingService {
     }
 
     private void validateBookingForAdding(BookingRequestDto newBooking, int bookerId, Item bookingItem) {
-        if (!newBooking.getEnd().isAfter(newBooking.getStart())) {
-            log.warn("Добавление бронирования с некорректными датами начала и окончания - {}", newBooking);
-            throw new ValidationException("Ошибка добавления бронирования. " +
-                    "Дата начала бронирования не может быть позже даты окончания");
-        }
         if (bookerId == bookingItem.getOwner().getId()) {
             log.warn("Запрос пользователем c id - {} своей вещи - {}", bookerId, bookingItem);
             throw new ResourceNotFoundException("Вещь не может быть забронирована своим хозяином");
