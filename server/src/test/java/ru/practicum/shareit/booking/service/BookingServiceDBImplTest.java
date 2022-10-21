@@ -66,14 +66,6 @@ class BookingServiceDBImplTest {
     }
 
     @Test
-    void addBookingWithWrongStartTest() {
-        booking1.setStart(LocalDateTime.now().plusDays(3));
-        assertThatThrownBy(() -> bookingService.addBooking(
-                BookingMapper.toBookingRequestDto(booking1), user2.getId()))
-                .isInstanceOf(ValidationException.class);
-    }
-
-    @Test
     void addBookingNotAvailableItemTest() {
         item1.setAvailable(false);
         when(itemService.getItem(any(Integer.class))).thenReturn(item1);
